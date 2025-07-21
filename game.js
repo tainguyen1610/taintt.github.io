@@ -69,9 +69,7 @@ function shuffleCard() {
         card.addEventListener("click", flipCard);
     });
 }
-
 shuffleCard();
-
 cards.forEach(card => {
     card.addEventListener("click", flipCard);
 });
