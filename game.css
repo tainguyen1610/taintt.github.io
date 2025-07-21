@@ -6,7 +6,6 @@
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-
 body {
   display: flex;
   align-items: center;
@@ -14,13 +13,11 @@ body {
   min-height: 100vh;
   background: #6563FF; /* nền xanh tím */
 }
-
 .wrapper {
   padding: 25px;
   border-radius: 10px;
   background: #6563FF; /* bỏ nền xám, để đồng bộ màu */
 }
-
 .cards {
   height: 400px;
   width: 400px;
@@ -28,7 +25,6 @@ body {
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 10px;
 }
-
 .card {
   background: #fff;
   border-radius: 12px;
@@ -43,18 +39,15 @@ body {
   user-select: none;
   transition: transform 0.2s ease;
 }
-
 .card:hover {
   transform: scale(1.05);
 }
-
 /* Khi lật ra hình ảnh */
 .card img {
   width: 80%;
   height: auto;
   border-radius: 8px;
 }
-
 /* Responsive */
 @media screen and (max-width: 700px) {
   .cards {
@@ -62,7 +55,6 @@ body {
     width: 350px;
   }
 }
-
 @media screen and (max-width: 530px) {
   .cards {
     height: 300px;
