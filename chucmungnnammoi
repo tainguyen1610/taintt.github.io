@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year</title>
+    <style>
+        /* --- CẤU HÌNH CƠ BẢN --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Nền đen */
+            overflow: hidden; /* Ẩn thanh cuộn */
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* --- PHÁO HOA (CANVAS) --- */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0; /* Nằm dưới cùng */
+        }
+
+        /* --- CÁC PHẦN TỬ TRÔI (ẢNH & CHỮ) --- */
+        .floating-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Để chuột bấm xuyên qua được */
+            z-index: 10; /* Nằm trên pháo hoa */
+        }
+
+        .float-item {
+            position: absolute;
+            bottom: -150px; /* Xuất phát từ dưới màn hình */
+            animation: floatUp linear forwards;
+            opacity: 0.9;
+        }
+
+        /* Kiểu dáng cho CHỮ (Lời chúc) */
+        .wish-text {
+            color: #fff;
+            background: rgba(255, 20, 147, 0.2); /* Màu hồng nhạt trong suốt */
+            border: 1px solid #ff69b4; /* Viền hồng */
+            box-shadow: 0 0 10px #ff1493, inset 0 0 10px #ff1493; /* Hiệu ứng Neon phát sáng */
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            white-space: nowrap;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        /* Kiểu dáng cho ẢNH */
+        .wish-img {
+            width: 150px; /* Kích thước ảnh */
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ff69b4;
+            box-shadow: 0 0 15px #ff1493; /* Phát sáng quanh ảnh */
+            object-fit: cover;
+        }
+
+        /* Hiệu ứng chuyển động đi lên */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) scale(1); /* Bay quá màn hình */
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div id="floatingContainer" class="floating-container"></div>
+
+    <script>
+        /* ==========================================
+           PHẦN 1: CẤU HÌNH DỮ LIỆU CỦA BẠN
+           (Thay ảnh và lời chúc tại đây)
+           ========================================== */
+        
+        // Danh sách lời chúc
+        const wishes = [
+            "Năm mới bình an ❤️",
+            "Chúc em luôn xinh đẹp và hạnh phúc",
+            "Năm mới an khang thịnh vượng",
+            "Yêu đời mỗi ngày nhé! 😍",
+            "Mọi điều ước đều thành hiện thực ✨",
+            "Happy New Year! 🎆",
+            "Luôn mỉm cười em nhé 😊",
+            "Gia đình hạnh phúc sum vầy"
+        ];
+
+        // Danh sách link ảnh (Bạn hãy thay link ảnh thật của bạn vào đây)
+        // Hiện tại mình để ảnh mẫu ngẫu nhiên
+        const images = [
+            "https://picsum.photos/200/300?random=1", 
+            "https://picsum.photos/200/200?random=2",
+            "https://picsum.photos/200/300?random=3",
+            "https://picsum.photos/200/250?random=4"
+        ];
+
+        /* ==========================================
+           PHẦN 2: XỬ LÝ HIỆU ỨNG BAY LÊN (FLOATING)
+           ========================================== */
+        const container = document.getElementById('floatingContainer');
+
+        function createFloatingElement() {
+            const el = document.createElement('div');
+            el.classList.add('float-item');
+
+            // Ngẫu nhiên chọn: 0 là Chữ, 1 là Ảnh
+            const type = Math.random() > 0.4 ? 'text' : 'image'; // 60% ra chữ, 40% ra ảnh
+
+            if (type === 'text') {
+                el.classList.add('wish-text');
+                el.innerText = wishes[Math.floor(Math.random() * wishes.length)];
+            } else {
+                const img = document.createElement('img');
+                img.src = images[Math.floor(Math.random() * images.length)];
+                img.classList.add('wish-img');
+                el.appendChild(img);
+            }
+
+            // Random vị trí xuất hiện (trái -> phải)
+            const randomLeft = Math.floor(Math.random() * 90); 
+            el.style.left = randomLeft + '%';
+
+            // Random tốc độ bay (từ 8s đến 15s)
+            const duration = Math.random() * 7 + 8; 
+            el.style.animationDuration = duration + 's';
+
+            container.appendChild(el);
+
+            // Xóa phần tử sau khi bay xong để nhẹ máy
+            setTimeout(() => {
+                el.remove();
+            }, duration * 1000);
+        }
+
+        // Tạo phần tử mới mỗi 1.5 giây
+        setInterval(createFloatingElement, 1500);
+
+
+        /* ==========================================
+           PHẦN 3: HIỆU ỨNG PHÁO HOA (CANVAS)
+           ========================================== */
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Tự chỉnh lại kích thước khi resize cửa sổ
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                // Vận tốc tỏa ra ngẫu nhiên
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1; // Độ trong suốt
+                this.friction = 0.96; // Ma sát (để chậm dần)
+                this.gravity = 0.04; // Trọng lực (để rơi xuống)
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01; // Mờ dần
+            }
+        }
+
+        let particles = [];
+
+        function createFirework(x, y) {
+            const particleCount = 80;
+            // Màu sắc pháo hoa (Vàng, Đỏ, Hồng, Xanh)
+            const colors = ['#ff0040', '#ff00ff', '#ffff00', '#00ff00', '#00ffff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            // Tạo hiệu ứng vệt mờ (trails)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((particle, index) => {
+                if (particle.alpha > 0) {
+                    particle.update();
+                    particle.draw();
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+
+            // Tự động bắn pháo hoa ngẫu nhiên
+            if (Math.random() < 0.03) { // Tỉ lệ xuất hiện
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height / 2; // Bắn ở nửa trên
+                createFirework(x, y);
+            }
+        }
+
+        // Bắt đầu chạy pháo hoa
+        animate();
+
+        // Click chuột để bắn pháo hoa
+        window.addEventListener('click', (e) => {
+            createFirework(e.clientX, e.clientY);
+        });
+
+    </script>
+</body>
+</html>
